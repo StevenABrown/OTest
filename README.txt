@@ -1,10 +1,10 @@
 OTest is a Windows console mode program that demonstrates connectivity with Oanda trade 
-server. OTest gets a single quote from 
-https://api-fxpractice.oanda.com/v1/prices?instruments=EUR_USD, opens a trade at 
-https://api-fxpractice.oanda.com/v1/accounts/<your_account_number>/orders, displays 
-open trades, closes the open trade, and then displays streaming quotes from 
-https://stream-fxpractice.oanda.com/v1/prices?accountId=<your_account_number>&instruments=EUR_USD 
-All output is to the screen in a Windows console window, and to output.txt.
+server. OTest gets a single quote from https://api-fxpractice.oanda.com/v1/prices?
+instruments=EUR_USD, opens a trade at https://api-fxpractice.oanda.com/v1/accounts/
+<your_account_number>/orders, displays open trades, closes the open trade, and then 
+displays streaming quotes from https://stream-fxpractice.oanda.com/v1/prices?accountId=
+<your_account_number>&instruments=EUR_USD. All output is to the screen in a Windows 
+console window, and to output.txt.
 
 
 Compiler and Project Settings
