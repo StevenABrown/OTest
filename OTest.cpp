@@ -305,7 +305,7 @@ int main()
 // Close handle of previous request before initializing hRequest for new request to list trades.
   InternetCloseHandle(hRequest);
 
-// Set count parameter to maximum number of trades to list.
+// Set "count" parameter to maximum number of trades to list.
   hRequest = HttpOpenRequest(hInet,                                 // _In_ HINTERNET hConnect
                              "GET",                                 // _In_ LPCTSTR lpszVerb
                              "/v1/accounts/<your_account_number>/trades?count=1",  // _In_ LPCTSTR lpszObjectName
