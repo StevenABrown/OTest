@@ -1,4 +1,4 @@
-// OTest.cpp 1.41, a test program to GET a single quote from 
+// OTest.cpp 1.42, a test program to GET a single quote from 
 // https://api-fxpractice.oanda.com/v1/prices?instruments=EUR_USD, to open a trade at 
 // https://api-fxpractice.oanda.com/v1/accounts/<your_account_number>/orders,
 // to display open trades, close the open trade, and then to display streaming quotes from
@@ -23,7 +23,7 @@ char ch_Buffer[4096], ch_Line[256];
 ofstream of_OutFile;
 
 int main()
-{ BOOL bResult; char *chPtr1, *chPtr2; DWORD dw1, dw2, dwIndex;
+{ BOOL bResult; char *chPtr0, *chPtr1, *chPtr2; DWORD dw1, dw2, dwIndex;
   HINTERNET hInet, hRequest; int i, iChunks;
 
   of_OutFile.open ("output.txt");  // Output will be written to the screen and to output.txt.
@@ -306,15 +306,15 @@ int main()
   InternetCloseHandle(hRequest);
 
 // Set "count" parameter to maximum number of trades to list.
-  hRequest = HttpOpenRequest(hInet,                                 // _In_ HINTERNET hConnect
-                             "GET",                                 // _In_ LPCTSTR lpszVerb
-                             "/v1/accounts/<your_account_number>/trades?count=1",  // _In_ LPCTSTR lpszObjectName
+  hRequest = HttpOpenRequest(hInet,                                  // _In_ HINTERNET hConnect
+                             "GET",                                  // _In_ LPCTSTR lpszVerb
+                             "/v1/accounts/<your_account_number>/trades?count=15", // _In_ LPCTSTR lpszObjectName
 //                           "/v1/accounts/<your_account_number>",  // Use this line to get account information.
-                             "HTTP/1.1",                            // _In_ LPCTSTR lpszVersion
-                             NULL,                                  // _In_ LPCTSTR lpszReferer
-                             str_Array,                             // _In_ LPCTSTR *lplpszAcceptTypes
-                             INTERNET_FLAG_SECURE,                  // _In_ DWORD dwFlags
-                             NULL);                                 // _In_ DWORD dwContext
+                             "HTTP/1.1",                             // _In_ LPCTSTR lpszVersion
+                             NULL,                                   // _In_ LPCTSTR lpszReferer
+                             str_Array,                              // _In_ LPCTSTR *lplpszAcceptTypes
+                             INTERNET_FLAG_SECURE,                   // _In_ DWORD dwFlags
+                             NULL);                                  // _In_ DWORD dwContext
 
   if(hRequest == NULL) 
   { cout       << "Call to HttpOpenRequest returned NULL.\n";
@@ -420,20 +420,26 @@ int main()
     of_OutFile << "Error code " << dw2 << endl;
   }
 
-// Get trade_id of first trade in JSON string in ch_Buffer, so we can close the trade.
-// We will use functions from the C library to do that, but JSON parsing libraries are available.
+// The oldest trade must be closed first, so get the trade_id of the last trade in JSON string in ch_Buffer, so 
+// it can be closed. We will use functions from the C library to do that, but JSON parsing libraries are available.
 
   strcpy(ch_Line, "/v1/accounts/<your_account_number>/trades/");  // trade_id will be appended to this string.
 
-// Find first occurrance of "id" in JSON string.
-  chPtr1 = strstr(ch_Buffer, "id");
-  chPtr1 += 6; // Advance pointer to start of trade_id number.
+// Find last occurrance of "id" in JSON string.
+  chPtr0 = chPtr1 = ch_Buffer;
+  while(chPtr0 != NULL)
+  { chPtr1 = chPtr0;
+    chPtr0 = strstr(chPtr1+1, "\"id\"");
+  }
+
+//chPtr1 = strstr(ch_Buffer, "id");
+  chPtr1 += 7; // Advance pointer to start of trade_id number.
 // Find comma at end of number, and write NULL to that address.
   chPtr2 = strchr(chPtr1, 44);  chPtr2[0] = 0;
 // Append trade_id number to line buffer.
   strcat(ch_Line, chPtr1);
-  cout       << "First trade_id found: " << chPtr1 << "\n" << endl;
-  of_OutFile << "First trade_id found: " << chPtr1 << "\n" << endl;
+  cout       << "Last trade_id found: " << chPtr1 << "\n" << endl;
+  of_OutFile << "Last trade_id found: " << chPtr1 << "\n" << endl;
 
 // Release request handle before making new request.
   InternetCloseHandle(hRequest);
@@ -637,7 +643,7 @@ int main()
   }
 
 // Set iChunks equal to the number of streaming chunks to receive, including ticks and heartbeats.
-  iChunks = 24;
+  iChunks = 4;
 
   for(i = 0; i < iChunks; i++)
   { dw1 = 4096;  // size of ch_Buffer
