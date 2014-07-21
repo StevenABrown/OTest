@@ -1,7 +1,7 @@
 // OTest.cpp 1.42, a test program to GET a single quote from 
 // https://api-fxpractice.oanda.com/v1/prices?instruments=EUR_USD, to open a trade at 
 // https://api-fxpractice.oanda.com/v1/accounts/<your_account_number>/orders,
-// to display open trades, close the open trade, and then to display streaming quotes from
+// to display open trades, close the oldest open trade, and then to display streaming quotes from
 // https://stream-fxpractice.oanda.com/v1/prices?accountId=<your_account_number>&instruments=EUR_USD 
 
 // All output is to the screen in a Windows console window, and to output.txt.
