@@ -432,7 +432,6 @@ int main()
     chPtr0 = strstr(chPtr1+1, "\"id\"");
   }
 
-//chPtr1 = strstr(ch_Buffer, "id");
   chPtr1 += 7; // Advance pointer to start of trade_id number.
 // Find comma at end of number, and write NULL to that address.
   chPtr2 = strchr(chPtr1, 44);  chPtr2[0] = 0;
