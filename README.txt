@@ -4,7 +4,8 @@ instruments=EUR_USD, opens a trade at https://api-fxpractice.oanda.com/v1/accoun
 <your_account_number>/orders, displays open trades, closes the open trade, and then 
 displays streaming quotes from https://stream-fxpractice.oanda.com/v1/prices?accountId=
 <your_account_number>&instruments=EUR_USD. All output is to the screen in a Windows 
-console window, and to output.txt.
+console window, and to output.txt. Version 1.42 closes oldest trade in list obtained 
+from server, instead of newest trade.
 
 
 Compiler and Project Settings
