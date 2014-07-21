@@ -306,15 +306,15 @@ int main()
   InternetCloseHandle(hRequest);
 
 // Set "count" parameter to maximum number of trades to list.
-  hRequest = HttpOpenRequest(hInet,                                  // _In_ HINTERNET hConnect
-                             "GET",                                  // _In_ LPCTSTR lpszVerb
+  hRequest = HttpOpenRequest(hInet,                                 // _In_ HINTERNET hConnect
+                             "GET",                                 // _In_ LPCTSTR lpszVerb
                              "/v1/accounts/<your_account_number>/trades?count=15", // _In_ LPCTSTR lpszObjectName
 //                           "/v1/accounts/<your_account_number>",  // Use this line to get account information.
-                             "HTTP/1.1",                             // _In_ LPCTSTR lpszVersion
-                             NULL,                                   // _In_ LPCTSTR lpszReferer
-                             str_Array,                              // _In_ LPCTSTR *lplpszAcceptTypes
-                             INTERNET_FLAG_SECURE,                   // _In_ DWORD dwFlags
-                             NULL);                                  // _In_ DWORD dwContext
+                             "HTTP/1.1",                            // _In_ LPCTSTR lpszVersion
+                             NULL,                                  // _In_ LPCTSTR lpszReferer
+                             str_Array,                             // _In_ LPCTSTR *lplpszAcceptTypes
+                             INTERNET_FLAG_SECURE,                  // _In_ DWORD dwFlags
+                             NULL);                                 // _In_ DWORD dwContext
 
   if(hRequest == NULL) 
   { cout       << "Call to HttpOpenRequest returned NULL.\n";
