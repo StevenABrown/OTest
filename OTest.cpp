@@ -642,7 +642,7 @@ int main()
   }
 
 // Set iChunks equal to the number of streaming chunks to receive, including ticks and heartbeats.
-  iChunks = 4;
+  iChunks = 24;
 
   for(i = 0; i < iChunks; i++)
   { dw1 = 4096;  // size of ch_Buffer
