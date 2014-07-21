@@ -9,7 +9,7 @@ Windows console window, and to output.txt.
 
 Compiler and Project Settings
 
-OTest.cpp runs in a Windows console window and is launched from the command prompt. It is 
+OTest runs in a Windows console window and is launched from the command prompt. It is 
 designed to be compliled as a C++ Win32 console mode program in Microsoft Visual Studio 
 Express 2013, which can be downloaded from Microsoft; registration to use that compiler 
 is free. Necessary Project settings: no precompiled headers, add wininet.lib to the list 
