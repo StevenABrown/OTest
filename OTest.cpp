@@ -423,7 +423,7 @@ int main()
 // The oldest trade must be closed first, so get the trade_id of the last trade in JSON string in ch_Buffer, so 
 // it can be closed. We will use functions from the C library to do that, but JSON parsing libraries are available.
 
-  strcpy(ch_Line, "/v1/accounts/<your_account_number>/trades/");  // trade_id will be appended to this string.
+  strcpy(ch_Line, "/v1/accounts/<your_account_number>/trades/");  // trade_id to be appended to this string.
 
 // Find last occurrance of "id" in JSON string.
   chPtr0 = chPtr1 = ch_Buffer;
