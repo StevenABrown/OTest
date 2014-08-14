@@ -1,4 +1,4 @@
-// OTest.cpp 1.42, a test program to GET a single quote from 
+// OTest.cpp 1.43, a test program to GET a single quote from 
 // https://api-fxpractice.oanda.com/v1/prices?instruments=EUR_USD, to open a trade at 
 // https://api-fxpractice.oanda.com/v1/accounts/<your_account_number>/orders,
 // to display open trades, close the oldest open trade, and then to display streaming quotes from
@@ -28,6 +28,17 @@ int main()
 
   of_OutFile.open ("output.txt");  // Output will be written to the screen and to output.txt.
 
+  if(InternetCheckConnection("https://api-fxpractice.oanda.com/", FLAG_ICC_FORCE_CONNECTION, 0))
+  { cout << "\nCall to InternetCheckConnection returned true.\n";
+    of_OutFile << "Call to InternetCheckConnection returned true.\n";
+  }
+  else
+  { cout << "\nCall to InternetCheckConnection returned false.\n";
+    of_OutFile << "Call to InternetCheckConnection returned false.\n";
+    of_OutFile.close();
+    return 0;
+  }
+
   h_Inet = InternetOpen("OTest",                    // _In_ LPCTSTR lpszAgent
                         INTERNET_OPEN_TYPE_DIRECT,  // _In_ DWORD dwAccessType
                         NULL,                       // _In_ LPCTSTR lpszProxyName
@@ -35,14 +46,14 @@ int main()
                         NULL);                      // _In_ DWORD dwFlags
 
   if(h_Inet == NULL) 
-  { cout       << "\nCall to InternetOpen returned NULL. Aborting.\n"; 
-    of_OutFile << "\nCall to InternetOpen returned NULL. Aborting.\n";
+  { cout       << "Call to InternetOpen returned NULL. Aborting.\n"; 
+    of_OutFile << "Call to InternetOpen returned NULL. Aborting.\n";
     of_OutFile.close();
     return 0;
   }
   else
-  { cout       << "\nCall to InternetOpen returned valid handle.\n";
-    of_OutFile << "\nCall to InternetOpen returned valid handle.\n";
+  { cout       << "Call to InternetOpen returned valid handle.\n";
+    of_OutFile << "Call to InternetOpen returned valid handle.\n";
   }
 
   hInet = InternetConnect(h_Inet,        // _In_ HINTERNET hInternet
