@@ -570,7 +570,7 @@ int main()
       of_OutFile << "Error code " << dw2 << endl;
     }
 
-  }
+  }//END if(chPtr0 != NULL)
   else cout << "The string \"id\" could not be found in ch_Buffer." << endl;
 
 // The next section displays streaming quotes, calling InternetReadFile() in synchronous mode.
