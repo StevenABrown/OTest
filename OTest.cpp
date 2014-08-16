@@ -1,4 +1,4 @@
-// OTest.cpp 1.43, a test program to GET a single quote from 
+// OTest.cpp 1.44, a test program to GET a single quote from 
 // https://api-fxpractice.oanda.com/v1/prices?instruments=EUR_USD, to open a trade at 
 // https://api-fxpractice.oanda.com/v1/accounts/<your_account_number>/orders,
 // to display open trades, close the oldest open trade, and then to display streaming quotes from
@@ -436,137 +436,142 @@ int main()
 
   strcpy(ch_Line, "/v1/accounts/<your_account_number>/trades/");  // trade_id to be appended to this string.
 
-// Find last occurrance of "id" in JSON string.
-  chPtr0 = chPtr1 = ch_Buffer;
-  while(chPtr0 != NULL)
-  { chPtr1 = chPtr0;
-    chPtr0 = strstr(chPtr1+1, "\"id\"");
-  }
+// See if JSON string in ch_Buffer contains "id", and if it does, find last occurrance. 
+  chPtr0 = strstr(ch_Buffer, "\"id\"");
+  if(chPtr0 != NULL)
+  { chPtr0 = chPtr1 = ch_Buffer;
+    while(chPtr0 != NULL)
+    { chPtr1 = chPtr0;
+      chPtr0 = strstr(chPtr1+1, "\"id\"");
+    }
 
-  chPtr1 += 7; // Advance pointer to start of trade_id number.
+    chPtr1 += 7; // Advance pointer to start of trade_id number.
 // Find comma at end of number, and write NULL to that address.
-  chPtr2 = strchr(chPtr1, 44);  chPtr2[0] = 0;
+    chPtr2 = strchr(chPtr1, 44);  chPtr2[0] = 0;
 // Append trade_id number to line buffer.
-  strcat(ch_Line, chPtr1);
-  cout       << "Last trade_id found: " << chPtr1 << "\n" << endl;
-  of_OutFile << "Last trade_id found: " << chPtr1 << "\n" << endl;
+    strcat(ch_Line, chPtr1);
+    cout       << "Last trade_id found: " << chPtr1 << "\n" << endl;
+    of_OutFile << "Last trade_id found: " << chPtr1 << "\n" << endl;
 
 // Release request handle before making new request.
-  InternetCloseHandle(hRequest);
+    InternetCloseHandle(hRequest);
 
 // Close the trade.
-  hRequest = HttpOpenRequest(hInet,                 // _In_ HINTERNET hConnect
-                             "DELETE",              // _In_ LPCTSTR lpszVerb
-                             ch_Line,               // _In_ LPCTSTR lpszObjectName
-                             "HTTP/1.1",            // _In_ LPCTSTR lpszVersion
-                             NULL,                  // _In_ LPCTSTR lpszReferer
-                             str_Array,             // _In_ LPCTSTR *lplpszAcceptTypes
-                             INTERNET_FLAG_SECURE,  // _In_ DWORD dwFlags
-                             NULL);                 // _In_ DWORD dwContext
+    hRequest = HttpOpenRequest(hInet,                 // _In_ HINTERNET hConnect
+                               "DELETE",              // _In_ LPCTSTR lpszVerb
+                               ch_Line,               // _In_ LPCTSTR lpszObjectName
+                               "HTTP/1.1",            // _In_ LPCTSTR lpszVersion
+                               NULL,                  // _In_ LPCTSTR lpszReferer
+                               str_Array,             // _In_ LPCTSTR *lplpszAcceptTypes
+                               INTERNET_FLAG_SECURE,  // _In_ DWORD dwFlags
+                               NULL);                 // _In_ DWORD dwContext
 
-  if(hRequest == NULL) 
-  { cout       << "Call to HttpOpenRequest returned NULL.\n";
-    of_OutFile << "Call to HttpOpenRequest returned NULL.\n";
-  }
-  else
-  { cout       << "Call to HttpOpenRequest returned valid handle.\n";
-    of_OutFile << "Call to HttpOpenRequest returned valid handle.\n";
-  }
+    if(hRequest == NULL) 
+    { cout       << "Call to HttpOpenRequest returned NULL.\n";
+      of_OutFile << "Call to HttpOpenRequest returned NULL.\n";
+    }
+    else
+    { cout       << "Call to HttpOpenRequest returned valid handle.\n";
+      of_OutFile << "Call to HttpOpenRequest returned valid handle.\n";
+    }
 
-  bResult = HttpSendRequest(hRequest,  // _In_ HINTERNET hRequest
-              "Authorization: Bearer <your_access_token>", // _In_ LPCTSTR lpszHeaders
-                            -1,        // _In_ DWORD dwHeadersLength
-                            NULL,      // _In_ LPVOID lpOptional
-                            0);        // _In_ DWORD dwOptionalLength
+    bResult = HttpSendRequest(hRequest,  // _In_ HINTERNET hRequest
+                "Authorization: Bearer <your_access_token>", // _In_ LPCTSTR lpszHeaders
+                              -1,        // _In_ DWORD dwHeadersLength
+                              NULL,      // _In_ LPVOID lpOptional
+                              0);        // _In_ DWORD dwOptionalLength
   
-  if(bResult)
-  { cout       << "Call to HttpSendRequest returned TRUE.\n";
-    of_OutFile << "Call to HttpSendRequest returned TRUE.\n";
+    if(bResult)
+    { cout       << "Call to HttpSendRequest returned TRUE.\n";
+      of_OutFile << "Call to HttpSendRequest returned TRUE.\n";
+    }
+    else
+    { dw1 = GetLastError();
+      cout       << "Call to HttpSendRequest returned FALSE. Error code " << dw1 << "\n"; 
+      of_OutFile << "Call to HttpSendRequest returned FALSE. Error code " << dw1 << "\n"; 
+    }
+
+    dw1 = 4096;  // size of ch_Buffer
+    dwIndex = 0;
+
+    bResult = HttpQueryInfo(hRequest,                     // _In_ HINTERNET hRequest
+                            HTTP_QUERY_RAW_HEADERS_CRLF,  // _In_ DWORD dwInfoLevel
+                            ch_Buffer,                    // _Inout_ LPVOID lpvBuffer
+                            &dw1,                         // _Inout_ LPDWORD lpdwBufferLength
+                            &dwIndex);                    // _Inout_ LPDWORD lpdwIndex
+
+    if (bResult)
+    { cout << "Call to HttpQueryInfo returned TRUE.\n";
+      cout << "Number of bytes written to ch_Buffer for HTTP_QUERY_RAW_HEADERS_CRLF: " << dw1 << "\n";
+      cout << "String in ch_Buffer (starting on next line):\n" << ch_Buffer;
+      of_OutFile << "Call to HttpQueryInfo returned TRUE.\n";
+      of_OutFile << "Number of bytes written to ch_Buffer for HTTP_QUERY_RAW_HEADERS_CRLF: " << dw1 << "\n";
+      of_OutFile << "String in ch_Buffer (starting on next line):\n" << ch_Buffer;
+    }
+    else
+    { cout       << "Call to HttpQueryInfo returned FALSE. ";
+      of_OutFile << "Call to HttpQueryInfo returned FALSE. ";
+      dw2 = GetLastError();
+      cout       << "Error code " << dw2 << "\n";
+      of_OutFile << "Error code " << dw2 << "\n";
+    }
+
+    dw1 = 4096;  // size of ch_Buffer
+    dwIndex = 0;
+
+    bResult = HttpQueryInfo(hRequest,                   // _In_ HINTERNET hRequest
+                            HTTP_QUERY_CONTENT_LENGTH,  // _In_ DWORD dwInfoLevel
+                            ch_Buffer,                  // _Inout_ LPVOID lpvBuffer
+                            &dw1,                       // _Inout_ LPDWORD lpdwBufferLength
+                            &dwIndex);                  // _Inout_ LPDWORD lpdwIndex
+
+    ch_Buffer[dw1] = 0;  // Terminate string in ch_Buffer by appending a null character.
+
+    if(bResult)
+    { cout << "Call to HttpQueryInfo returned TRUE.\n";
+      cout << "Number of bytes written to ch_Buffer for CONTENT LENGTH: " << dw1 << "\n";
+      cout << "String in ch_Buffer: " << ch_Buffer << "\n";
+      of_OutFile << "Call to HttpQueryInfo returned TRUE.\n";
+      of_OutFile << "Number of bytes written to ch_Buffer for CONTENT LENGTH: " << dw1 << "\n";
+      of_OutFile << "String in ch_Buffer: " << ch_Buffer << "\n";
+    }
+    else
+    { cout       << "Call to HttpQueryInfo returned FALSE. ";
+      of_OutFile << "Call to HttpQueryInfo returned FALSE. ";
+      dw2 = GetLastError();
+      cout       << "Error code " << dw2 << "\n";
+      of_OutFile << "Error code " << dw2 << "\n";
+    }
+
+    dw1 = atol(ch_Buffer); // Convert CONTENT_LENGTH string in ch_Buffer to numerical value.
+
+    bResult = InternetReadFile(hRequest,  // _In_  HINTERNET hFile
+                               ch_Buffer, // _Out_ LPVOID lpBuffer
+                               dw1,       // _In_  DWORD dwNumberOfBytesToRead
+                               &dw2);     // _Out_ LPDWORD lpdwNumberOfBytesRead
+
+    ch_Buffer[dw2] = 0;  // Terminate string in ch_Buffer by appending a null character.
+
+    if(bResult)
+    { cout << "\nCall to InternetReadFile returned TRUE.\n";
+      cout << "Size of CONTENT string written to ch_Buffer: " << dw2 << "\n";
+      cout << "CONTENT string written to ch_Buffer (starting on next line):\n";
+      cout << ch_Buffer << "\n" << endl;
+      of_OutFile << "\nCall to InternetReadFile returned TRUE.\n";
+      of_OutFile << "Size of CONTENT string written to ch_Buffer: " << dw2 << "\n";
+      of_OutFile << "CONTENT string written to ch_Buffer (starting on next line):\n";
+      of_OutFile << ch_Buffer << "\n" << endl;
+    }
+    else
+    { cout       << "\nCall to InternetReadFile returned FALSE. ";
+      of_OutFile << "\nCall to InternetReadFile returned FALSE. ";
+      dw2 = GetLastError();
+      cout       << "Error code " << dw2 << endl;
+      of_OutFile << "Error code " << dw2 << endl;
+    }
+
   }
-  else
-  { dw1 = GetLastError();
-    cout       << "Call to HttpSendRequest returned FALSE. Error code " << dw1 << "\n"; 
-    of_OutFile << "Call to HttpSendRequest returned FALSE. Error code " << dw1 << "\n"; 
-  }
-
-  dw1 = 4096;  // size of ch_Buffer
-  dwIndex = 0;
-
-  bResult = HttpQueryInfo(hRequest,                     // _In_ HINTERNET hRequest
-                          HTTP_QUERY_RAW_HEADERS_CRLF,  // _In_ DWORD dwInfoLevel
-                          ch_Buffer,                    // _Inout_ LPVOID lpvBuffer
-                          &dw1,                         // _Inout_ LPDWORD lpdwBufferLength
-                          &dwIndex);                    // _Inout_ LPDWORD lpdwIndex
-
-  if (bResult)
-  { cout << "Call to HttpQueryInfo returned TRUE.\n";
-    cout << "Number of bytes written to ch_Buffer for HTTP_QUERY_RAW_HEADERS_CRLF: " << dw1 << "\n";
-    cout << "String in ch_Buffer (starting on next line):\n" << ch_Buffer;
-    of_OutFile << "Call to HttpQueryInfo returned TRUE.\n";
-    of_OutFile << "Number of bytes written to ch_Buffer for HTTP_QUERY_RAW_HEADERS_CRLF: " << dw1 << "\n";
-    of_OutFile << "String in ch_Buffer (starting on next line):\n" << ch_Buffer;
-  }
-  else
-  { cout       << "Call to HttpQueryInfo returned FALSE. ";
-    of_OutFile << "Call to HttpQueryInfo returned FALSE. ";
-    dw2 = GetLastError();
-    cout       << "Error code " << dw2 << "\n";
-    of_OutFile << "Error code " << dw2 << "\n";
-  }
-
-  dw1 = 4096;  // size of ch_Buffer
-  dwIndex = 0;
-
-  bResult = HttpQueryInfo(hRequest,                   // _In_ HINTERNET hRequest
-                          HTTP_QUERY_CONTENT_LENGTH,  // _In_ DWORD dwInfoLevel
-                          ch_Buffer,                  // _Inout_ LPVOID lpvBuffer
-                          &dw1,                       // _Inout_ LPDWORD lpdwBufferLength
-                          &dwIndex);                  // _Inout_ LPDWORD lpdwIndex
-
-  ch_Buffer[dw1] = 0;  // Terminate string in ch_Buffer by appending a null character.
-
-  if(bResult)
-  { cout << "Call to HttpQueryInfo returned TRUE.\n";
-    cout << "Number of bytes written to ch_Buffer for CONTENT LENGTH: " << dw1 << "\n";
-    cout << "String in ch_Buffer: " << ch_Buffer << "\n";
-    of_OutFile << "Call to HttpQueryInfo returned TRUE.\n";
-    of_OutFile << "Number of bytes written to ch_Buffer for CONTENT LENGTH: " << dw1 << "\n";
-    of_OutFile << "String in ch_Buffer: " << ch_Buffer << "\n";
-  }
-  else
-  { cout       << "Call to HttpQueryInfo returned FALSE. ";
-    of_OutFile << "Call to HttpQueryInfo returned FALSE. ";
-    dw2 = GetLastError();
-    cout       << "Error code " << dw2 << "\n";
-    of_OutFile << "Error code " << dw2 << "\n";
-  }
-
-  dw1 = atol(ch_Buffer); // Convert CONTENT_LENGTH string in ch_Buffer to numerical value.
-
-  bResult = InternetReadFile(hRequest,  // _In_  HINTERNET hFile
-                             ch_Buffer, // _Out_ LPVOID lpBuffer
-                             dw1,       // _In_  DWORD dwNumberOfBytesToRead
-                             &dw2);     // _Out_ LPDWORD lpdwNumberOfBytesRead
-
-  ch_Buffer[dw2] = 0;  // Terminate string in ch_Buffer by appending a null character.
-
-  if(bResult)
-  { cout << "\nCall to InternetReadFile returned TRUE.\n";
-    cout << "Size of CONTENT string written to ch_Buffer: " << dw2 << "\n";
-    cout << "CONTENT string written to ch_Buffer (starting on next line):\n";
-    cout << ch_Buffer << "\n" << endl;
-    of_OutFile << "\nCall to InternetReadFile returned TRUE.\n";
-    of_OutFile << "Size of CONTENT string written to ch_Buffer: " << dw2 << "\n";
-    of_OutFile << "CONTENT string written to ch_Buffer (starting on next line):\n";
-    of_OutFile << ch_Buffer << "\n" << endl;
-  }
-  else
-  { cout       << "\nCall to InternetReadFile returned FALSE. ";
-    of_OutFile << "\nCall to InternetReadFile returned FALSE. ";
-    dw2 = GetLastError();
-    cout       << "Error code " << dw2 << endl;
-    of_OutFile << "Error code " << dw2 << endl;
-  }
+  else cout << "The string \"id\" could not be found in ch_Buffer." << endl;
 
 // The next section displays streaming quotes, calling InternetReadFile() in synchronous mode.
 
