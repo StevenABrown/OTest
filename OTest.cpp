@@ -436,7 +436,7 @@ int main()
 
   strcpy(ch_Line, "/v1/accounts/<your_account_number>/trades/");  // trade_id to be appended to this string.
 
-// See if JSON string in ch_Buffer contains "id", and if it does, find last occurrance. 
+// See if JSON string in ch_Buffer contains ""id"", and if it does, find last occurrance. 
   chPtr0 = strstr(ch_Buffer, "\"id\"");
   if(chPtr0 != NULL)
   { chPtr0 = chPtr1 = ch_Buffer;
